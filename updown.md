@@ -1,7 +1,7 @@
 # 细说文字超长收起展开功能
 在HTML5页面上经常会出现要隐藏部分内容，然后显示展开收起功能来实现，展开文字出现的前提是要内容三行放不下了，才能出现展开按钮，否则不应该出现展开按钮。如下：  
 收起的样式：    
-![展开](https://img11.360buyimg.com/jdphoto/s748x450_jfs/t1/79525/37/6458/337137/5d47f0a9Ef2a5ae5a/a5d40ddc07261984.png)
+![展开](https://img11.360buyimg.com/jdphoto/s748x450_jfs/t1/79525/37/6458/337137/5d47f0a9Ef2a5ae5a/a5d40ddc07261984.png)  
 
 展开的样式：  
 ![收起](https://img11.360buyimg.com/jdphoto/s764x862_jfs/t1/53126/2/6935/228838/5d47f0aaEa0c9bcec/090eecd43f8ae6d1.png)
