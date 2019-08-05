@@ -26,8 +26,25 @@ display: -webkit-box;
 
 ## js的实现
 我们首先用js来实现展开收起功能。  
-### 初识 getClientRects
-返回一个指向客户端中每一个盒子的边界矩形的矩形集合。 返回值是ClientRect对象集合，该对象是与该元素相关的CSS边框。每个ClientRect对象包含一组描述该边框的只读属性——left、top、right和bottom，单位为像素，这些属性值是相对于视口的top-left的。即使当表格的标题在表格的边框外面，该标题仍会被计算在内
+
+### getBoundingClientRect
+
+返回元素的大小及其相对于视口的位置。
+返回值是一个 DOMRect 对象，这个对象是由该元素的 getClientRects() 方法返回的一组矩形的集合, 即：是与该元素相关的CSS 边框集合 。
+DOMRect 对象包含了一组用于描述边框的只读属性——left、top、right和bottom，单位为像素。除了 width 和 height 外的属性都是相对于视口的左上角位置而言的。
+![alt](https://img11.360buyimg.com/jdphoto/s500x500_jfs/t1/55981/21/6969/25422/5d48233fE525c5b87/629f21ea0c8fa36b.png)
+
+同上，我们执行代码：  
+
+```js
+document.querySelector(".txt").getBoundingClientRect();
+```
+![alt](https://img11.360buyimg.com/jdphoto/s1246x396_jfs/t1/44334/15/11121/71425/5d4822a4Ead129289/75e5cc5ebd54bd4b.png)
+
+### 了解 getClientRects
+返回一个指向客户端中每一个盒子的边界矩形的矩形集合。 返回值是ClientRect对象集合，该对象是与该元素相关的CSS边框。每个ClientRect对象包含一组描述该边框的只读属性——left、top、right和bottom，单位为像素，这些属性值是相对于视口的top-left的。即使当表格的标题在表格的边框外面，该标题仍会被计算在内。
+
+### 实战 getClientRects
 ```js
 var rectCollection = Element.getClientRects();
 ```
@@ -50,6 +67,7 @@ document.querySelector(".txt").getClientRects();
 
 对于行内元素，元素内部的每一行都会有一个边框；对于块级元素，如果里面没有其他元素，一整块元素只有一个边框.
 所以是div就返回了三个DOMRect，但是div只返回一个。
+
 
 ### 文字超长处理
 使用getClientRects方法来处理文字超长，由于这个方法是实时返回页面元素的边界盒子，所以采用的是事后处理机制。
