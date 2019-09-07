@@ -1,12 +1,5 @@
-# 细说文字超长收起展开功能
-在HTML5页面上经常会出现要隐藏部分内容，然后显示展开收起功能来实现，展开文字出现的前提是要内容三行放不下了，才能出现展开按钮，否则不应该出现展开按钮。如下：  
-收起的样式：    
-![展开](https://img11.360buyimg.com/jdphoto/s748x450_jfs/t1/79525/37/6458/337137/5d47f0a9Ef2a5ae5a/a5d40ddc07261984.png)  
-
-展开的样式：  
-![收起](https://img11.360buyimg.com/jdphoto/s764x862_jfs/t1/53126/2/6935/228838/5d47f0aaEa0c9bcec/090eecd43f8ae6d1.png)
-
-如果需求是保持几行，多余文字...隐藏，那么问题就简单多了，几行css代码即可搞定，如下：  
+# 细说长谈文字超长展开收起功能
+如果只是单纯的文字超长，多余文字...隐藏，那么问题还是比较简单，几行css代码就搞定了，如下：  
 ```css
 overflow: hidden;
 text-overflow: ellipsis;
@@ -14,8 +7,15 @@ display: -webkit-box;
 -webkit-line-clamp: 3;
 -webkit-box-orient: vertical;
 ```
-但是没有办法再展开内容了。 接下来我们用css和js来实现这两种方式。   
+当前要实现的是文字超长，页面在末尾显示“展开”和“收起”两中状态，点击能做响应动作，展开按钮状态出现的前提是要内容三行放不下了，才能出现展开按钮，否则不应该出现展开按钮。如下：  
+收起的样式：    
+![展开](https://img11.360buyimg.com/jdphoto/s748x450_jfs/t1/79525/37/6458/337137/5d47f0a9Ef2a5ae5a/a5d40ddc07261984.png)  
 
+展开的样式：  
+![收起](https://img11.360buyimg.com/jdphoto/s764x862_jfs/t1/53126/2/6935/228838/5d47f0aaEa0c9bcec/090eecd43f8ae6d1.png)
+
+
+如果用上述的css来实现的，没办法捕捉到...的事件，没有办法再展开内容了。 接下来我们用css和js来实现这两种方式。   
 之前我们尝试过自己计算文字是否超长来做展开和隐藏，但是问题不少。
 - 头部有标签，得加入计算
 - 内容有换行标签
@@ -45,6 +45,7 @@ document.querySelector(".txt").getBoundingClientRect();
 返回一个指向客户端中每一个盒子的边界矩形的矩形集合。 返回值是ClientRect对象集合，该对象是与该元素相关的CSS边框。每个ClientRect对象包含一组描述该边框的只读属性——left、top、right和bottom，单位为像素，这些属性值是相对于视口的top-left的。即使当表格的标题在表格的边框外面，该标题仍会被计算在内。
 
 ### 实战 getClientRects
+
 ```js
 var rectCollection = Element.getClientRects();
 ```
@@ -68,8 +69,85 @@ document.querySelector(".txt").getClientRects();
 对于行内元素，元素内部的每一行都会有一个边框；对于块级元素，如果里面没有其他元素，一整块元素只有一个边框.
 所以是div就返回了三个DOMRect，但是div只返回一个。
 
+### 文字超长处理（一）
+我们采用文本遮住的方式来实现显示展开和收起。   
 
-### 文字超长处理
+在显示的文本外增加一个文本框
+```html
+<div class="wrap">
+  <span class="txt">我是一个小文本，<br>我是一个小文本</span>
+  <span class="dot open">...展开</span>
+</div>
+```
+然后我们设定字体大小和行高。比如字体是18，行高1.5。假如显示三行，则我们设置外层最大为18*3+9*2 = 72px;  如果是要动态文字大小，则同比计算即可。
+
+```css
+.wrap{
+  width:100%;
+  max-height:72px;
+  position:relative;
+  line-height:1.5;
+  font-size:18px;
+}
+.dot{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,.9);
+}
+
+```
+这个时候如果是文字超长，我们已经看到效果了。比如：    
+![展开](https://img11.360buyimg.com/jdphoto/s397x106_jfs/t1/75001/4/8043/56637/5d5e5fdcEd1b0b01d/46365261c167364c.png)  
+
+接下来我们需要把文字没有超长的时候，隐藏展开按钮即可。   
+#### 第一步：判断外层的高度。
+```js
+document.querySelector(".wrap").getClientRects();
+
+bottom: 258.359375
+height: 72
+left: 55
+right: 399
+top: 186.359375
+width: 344
+x: 55
+y: 186.359375
+```
+如果height小于72，则直接隐藏，说明文字没有超长。
+
+#### 第二步：获取内部文字高度。   
+
+如果外层已经达到72px了，那么可能超长，也可能是刚好三行。    
+
+```js
+document.querySelector(".txt").getClientRects();
+```
+得到如下数据。
+![txt](https://img11.360buyimg.com/jdphoto/s765x159_jfs/t1/53838/32/8484/62130/5d5e6242E8d6120a2/64ed387c555e2fff.png)  
+
+- 如果行数大于三行，则是需要显示展开按钮。
+- 如果小于等于三行，则不需要显示展开按钮
+
+这里重点要看下，获取getClientRects的行数。要去掉换行等的空行，即Bottom值一样。
+```js
+function getRectsLength(rects) {
+    var line = 0, lastBottom=0;
+    for(var i=0,len=list.length;i<len;i++){
+        if(list[i].bottom ==lastBottom){
+            return;
+        }
+        lastBottom = list[i].bottom;
+    		line++; 
+		}
+    return line;
+}
+```
+上面的处理方式，使用外层的wrap，需要是一个块状元素。如果外层不是块状元素，比如如下，签名需要插入一个标签，文字挨着标签显示。则只能用第二种方式实现。  
+
+![alt](https://img11.360buyimg.com/jdphoto/s424x194_jfs/t1/60138/16/7963/93807/5d5e68f9E4cbc3017/4328b3c59b9313cb.png)
+
+### 文字超长处理（二）
 使用getClientRects方法来处理文字超长，由于这个方法是实时返回页面元素的边界盒子，所以采用的是事后处理机制。
 
 html页面内容，在每一个item里面，存储showTxt和hideTxt,开始内容都在showTxt里面。
@@ -142,13 +220,18 @@ function handleDomLength(dom) {
 ```
 这个处理方式，最大的好处就是很精准，基本上完美达到产品的需求，不太足的地方就是需要回退字符串，频繁操作dom文本。
 
+## 另种js实现
+  上述实现是每个文字回退，尽管在实现中我们可以加速回退，但是实现性能终究不是太好，
+  
 ## css的实现
 css使用float来实现，如下：
-![alt](https://img11.360buyimg.com/jdphoto/s766x1020_jfs/t1/36141/23/15206/420981/5d480cc1Eac0dba7e/ba372899b981fcb2.png)
+![alt](https://img11.360buyimg.com/jdphoto/s766x1020_jfs/t1/36141/23/15206/420981/5d480cc1Eac0dba7e/ba372899b981fcb2.png)  
+
 有个三个盒子 div，粉色盒子左浮动，浅蓝色盒子和黄色盒子右浮动。  
 当浅蓝色盒子的高度低于粉色盒子，黄色盒子仍会处于浅蓝色盒子右下方。  
 如果浅蓝色盒子文本过多，高度超过了粉色盒子，则黄色盒子不会停留在右下方，而是掉到了粉色盒子下。  
-使用float浮动原理的表现形式巧妙的展现这个功能。
+使用float浮动原理的表现形式巧妙的展现这个功能。  
+
 ```html
 <div class="wrap">
     <div class="text">
