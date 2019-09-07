@@ -147,7 +147,9 @@ div {
 ```
 ![蒙层](./images/image-guide_border_6.gif)
 
-当然，我们还可以设置border-radius来实现圆形，有兴趣的可以尝试。 
+当然，我们还可以设置border-radius来实现圆形的蒙层区域，如下：  
+
+![border-radius](./images/image-guide_border_7.png) 
 
 总结：
 > border可以实现各种边线的形状，可以实现引导蒙层，页面指定区域透明，之外的都半透明来实现即可。
