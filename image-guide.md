@@ -128,20 +128,20 @@ div {
 这是一个150px的区域蒙层，我们看下如下示例就能很明白了：
 ```CSS
 .border_6{
-    width: 150px;
-    height: 150px;
+    width: 20px;
+    height: 20px;
     border-style:solid;
     border-color:rgba(0,0,0,.5);
-    border-width:50px;
+    border-width:20px;
     animation:border_ani 2s linear infinite alternate;
     box-sizing:content-box;
 }
 @keyframes border_ani {
     from {
-        border-width:50px;
+        border-width:20px;
     }
     to {
-      border-width:150px;
+      border-width:100px;
     }
   }
 ```
