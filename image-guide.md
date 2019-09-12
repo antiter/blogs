@@ -42,7 +42,7 @@ div {
     box-sizing:border-box;
 }
 ```
-![border_1](./images/image-guide_border_1.png)  
+![border_1](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_border_1.png)  
 
 实现了一个倒三角,这个应用场景是不是就比较多了，很多tips的指引，标注等都会用到。我就看到过这种倒三角使用一张图片代替的做法。   
 仔细看这段代码，主要有实现了三点：  
@@ -71,7 +71,7 @@ div {
     }
   }
 ```
-![animation](./images/image-guide_border_2.gif)
+![animation](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_border_2.gif)
 
 从图中我们可以清晰的看到，随着border-width的变化，整个div的绿色背景在跟随变化。 
 - 当border-width=0的时候，整个页面只有绿色背景，即都是内容的大小
@@ -92,7 +92,7 @@ div {
     box-sizing:border-box;
 }
 ```
-![斜三角](./images/image-guide_border_3.png)
+![斜三角](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_border_3.png)
 
 还可以实现工作中经常碰到的梯形：  
 ```CSS
@@ -106,7 +106,7 @@ div {
     box-sizing:border-box;
 }
 ```
-![梯形](./images/image-guide_border_4.png)
+![梯形](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_border_4.png)
 
 好了，这里不累赘了，感兴趣的可以各种尝试。遇到这种简单边线图，就不要动不动使用图片了。  
 
@@ -123,7 +123,7 @@ div {
     box-sizing:border-box;
 }
 ```
-![蒙层](./images/image-guide_border_5.png)
+![蒙层](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_border_5.png)
 
 这是一个150px的区域蒙层，我们看下如下示例就能很明白了：
 ```CSS
@@ -145,11 +145,11 @@ div {
     }
   }
 ```
-![蒙层](./images/image-guide_border_6.gif)
+![蒙层](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_border_6.gif)
 
 当然，我们还可以设置border-radius来实现圆形的蒙层区域，如下：  
 
-![border-radius](./images/image-guide_border_7.png)   
+![border-radius](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_border_7.png)   
 
 如果是椭圆呢？
 
@@ -167,7 +167,7 @@ box-shadow，大伙都不陌生，就是盒子的阴影，我们先来了解下�
     box-shadow: 10px 10px 5px 4px #000;
 }
 ```
-![阴影](./images/image-guide_boxshadow_1.png)
+![阴影](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_boxshadow_1.png)
 
 在宽高为50px的div,它的阴影水平和垂直都是10px，阴影模糊距离是5px,阴影的尺寸是4px,阴影是#000的颜色(这里给body增加了一个yellow的背景色以便于区分)。  
 
@@ -180,7 +180,7 @@ box-shadow，大伙都不陌生，就是盒子的阴影，我们先来了解下�
     box-shadow: 10px 10px 5px 4px rgba(0,0,0,.5);
 }
 ```
-![阴影](./images/image-guide_boxshadow_2.png)  
+![阴影](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_boxshadow_2.png)  
 
 那怎么让阴影遮盖整个页面呢？  
 - 阴影的水平和垂直距离是指距离原dev的距离，这个调整达不到效果，只会让阴影更多的偏离元素。
@@ -243,7 +243,7 @@ box-shadow，大伙都不陌生，就是盒子的阴影，我们先来了解下�
   z-index:3;
 }
 ```
-![z-index](./images/image-guide_z-index_1.png)  
+![z-index](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_z-index_1.png)  
 
 我们修改一下z2的样式。  
 ```css
@@ -273,7 +273,7 @@ box-shadow，大伙都不陌生，就是盒子的阴影，我们先来了解下�
     }
   }
 ```
-![z-index](./images/image-guide_z-index_2.gif)
+![z-index](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_z-index_2.gif)
 
 只要在布局页面元素的时候，把需要做蒙层的元素确定好，配合js，动态的设置元素的z-index + opacity，就可以很好的做到页面的引导蒙层效果。  
 
@@ -343,7 +343,7 @@ setInterval(()=>{
   },1000);
 },2000)
 ```
-![z-index](./images/image-guide_z-index_3.gif)
+![z-index](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_z-index_3.gif)
 
 看了这个例子，我们清晰的看到这个蒙层的实现过程。这种蒙层其实更好玩有趣，有点类似当前流行的骨架屏，其他已有元素需要遮罩的内容就是骨架屏的灰色部分，需要显现的就是重点的蒙层内容。  
 有趣！！！

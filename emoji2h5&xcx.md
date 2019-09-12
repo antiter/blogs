@@ -13,7 +13,7 @@ emoji表情都非常熟悉了，比如微信的会话窗口可以发表情。
 
 自定义，顾名思义就是自己定义的表情，不是通用的表情，按照自己系统的一套解析规则来实现的，只在我的系统里面能识别的。         
 示例：  
-![买买买](./images/emoji4h5_2.gif)  
+![买买买](https://raw.githubusercontent.com/antiter/blogs/master/images/emoji4h5_2.gif?raw=true)  
 
 ### 表情定义
 
@@ -27,7 +27,7 @@ export default emojiData = {
 
 这里我们约定表情图片有统一的路径格式，比如：https://wq.360buyimg.com/fd/wx/img/gwq/face/xxx.png。所以"买买买"实际上是对应https://wq.360buyimg.com/fd/wx/img/gwq/face/1.png
 
-![买买买](./images/emoji4h5_1.png)  
+![买买买](https://raw.githubusercontent.com/antiter/blogs/master/images/emoji4h5_1.png?raw=true)  
 
 这里定义了"买买买"这个表情文案对应的emoji表情的路径，当然自定义表情的文案和图片要一一对应上。   
 为了便于区分用户普通文案，我们通常自定义表情都会统一加上"[ ]",比如“买买买”最终显示的时候就是"[买买买]"。为了保证之前已经使用过的表情能正常显示，在系统里面[买买买]永远都只能对应这个图片路径，这里定义了一个数组，后面两个参数我们后面解释。    
