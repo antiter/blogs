@@ -200,7 +200,7 @@ Touch.fn.movend = function () {
 重点方法：onx5videoexitfullscreen 这个是 x5 浏览器在点击了全屏之后，再返回页面的时候，默认是视频 pause 的，所以需要 play
 
 ```js
-export function videoComponent(opt) {
+export default function videoComponent(opt) {
   var config = {
     props: ["feedData", "index"],
     data: function() {
