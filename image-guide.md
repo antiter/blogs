@@ -1,5 +1,6 @@
 
-首先我们看下啥是引导蒙层：  
+首先我们看下啥是引导蒙层，如下图页面是一个蒙层，但是会在某个局部位置高亮我们需要重点突出的内容：  
+
 ![阴影](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_1.png)    
 
 当前发现很多页面做蒙层引导，还是使用图片形式来做。
