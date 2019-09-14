@@ -439,7 +439,7 @@ canvas绘制的形状在重叠处都会变成透明的，非重叠处的其他�
     ctx.fillStyle ='rgba(255, 255, 255, 0.9)';
     ctx.fillRect(0, 0, width, height);
     ctx.fill();
-    ctx.fillStyle ='write';
+    ctx.fillStyle ='white';
     ctx.globalCompositeOperation="xor";
     ctx.fillRect(pos.left,pos.top,pos.width,pos.height);
     ctx.fill();
