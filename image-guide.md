@@ -452,5 +452,7 @@ setInterval(()=>{
     if(i>=4) i = 0;
 },1000)
 ```
-![z-index](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_content_2.gif)
+![z-index](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_content_2.gif)  
+
+看完以上实现，你最喜欢哪种实现方式呢？
 
