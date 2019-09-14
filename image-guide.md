@@ -9,15 +9,155 @@
 4. 图片的引导位置不能点击。
 5. low ？ not cool ？
 
-# 本文讲述三种思路来实现引导蒙层
+# 本文讲述六种思路来实现引导蒙层
 
+- z-index实现蒙层
+- 动态opacity实现
 - border实现
 - box-shadow实现
-- z-index + opacity实现
+- 节点复制实现
+- canvas实现
 
-> 以上三种引导蒙层实现思路，基本都能满足业务需求，从不同角度来实现了引导蒙层。就个人而言，更加推荐骨架屏式的动态opacity蒙层实现，更有趣更酷!!!  
+> 以上六种引导蒙层实现思路，在一定情况下都能满足业务需求，从不同角度来实现了引导蒙层。就个人而言，更加喜欢骨架屏式的动态opacity蒙层实现，更有趣更酷!!!  
 
-## 思路一：使用border的方式来实现
+## 思路一：使用z-index
+
+这个好理解，页面元素都是有层级的，我们只需要把最上层的元素设为蒙层区域，在蒙层区域之下设置一个遮罩层即可。 我们来看一个简单例子。
+```CSS
+.z1{
+  position:absolute;
+  left:50px;
+  top:50px;
+  width:50px;
+  height:50px;
+  background:blue;
+  z-index:1;
+}
+.z2{
+  position:absolute;
+  left:60px;
+  top:60px;
+  width:50px;
+  height:50px;
+  background:red;
+  z-index:2;
+}
+.z3{
+  position:absolute;
+  left:70px;
+  top:70px;
+  width:50px;
+  height:50px;
+  background:yellow;
+  z-index:3;
+}
+```
+![z-index](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_z-index_1.png)  
+
+我们修改一下z2的样式。  
+```css
+.z2{
+  position:absolute;
+  left:50px;
+  top:50px;
+  width:50px;
+  height:50px;
+  background:black;
+  opacity:0.5;
+  z-index:2;
+  animation:z_index 2s linear infinite alternate;
+}
+@keyframes z_index {
+    from {
+      left:50px;
+      top:50px;
+      width:50px;
+      height:50px;
+    }
+    to {
+      left:0px;
+      top:0px;
+      width:200px;
+      height:200px;
+    }
+  }
+```
+![z-index](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_z-index_2.gif)
+
+只要在布局页面元素的时候，把需要做蒙层的元素确定好，配合js，动态的设置元素的z-index + opacity，就可以很好的做到页面的引导蒙层效果。  
+
+## 思路二：使用opacity将非蒙层元素半透明
+
+我们不再新增蒙层，而是完全操作页面节点，将需要遮罩的节点都设置为半透明，蒙层显现内容则完全显示出来，页面的效果和蒙层不太一样，对于空白地方，我们仍然是不透明，只是将有内容的元素给透明，类似骨架屏的效果。  
+为了演示效果，我们看如下例子：  
+页面设置6个元素。
+```html
+<div class="wrap">
+    <div class="z z1"></div>
+    <div class="z z2"></div>
+    <div class="z z3"></div>
+    <div class="z z4"></div>
+    <div class="z z5"></div>
+    <div class="z z6"></div>
+  </div>
+```
+将元素内容用flex并排布局。
+```CSS
+.wrap{
+  display:flex;
+  flex-wrap:wrap;
+  width:150px;
+}
+.z{
+  width:50px;
+  height:50px;
+  transition:all 1s;
+}
+.z1{
+  background:blue;
+}
+.z2{
+  background:black;
+}
+.z3{
+  background:yellow;
+}
+.z4{
+  background:red;
+}
+.z5{
+  background:green;
+}
+.z6{
+  background:orange;
+}
+```
+使用js操作，依次半透明其他元素，显示当前元素来模拟蒙层。
+```js
+let arry = Array.from(document.querySelectorAll(".z"));
+let index = -1;
+let direct = 1;
+setInterval(()=>{
+  if(index>=5) direct = -1;
+  else if(index<=0) direct = 1;
+  index = index+direct;
+  arry.forEach((d,i)=>{
+    d.style.opacity = 1;
+  });
+  setTimeout(()=>{
+    arry.forEach((d,i)=>{
+      if(i==index) return;
+      d.style.opacity = 0.1;
+    });
+  },1000);
+},2000)
+```
+![z-index](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_z-index_3.gif)
+
+看了这个例子，我们清晰的看到这个蒙层的实现过程。这种蒙层其实更好玩有趣，有点类似当前流行的骨架屏，其他已有元素需要遮罩的内容就是骨架屏的灰色部分，需要显现的就是重点的蒙层内容。  
+有趣！！！
+
+## 思路三：使用border的方式来实现
 没错，就是普遍不能在普遍的border了，且看如下：  
 ```css
 div {
@@ -157,7 +297,7 @@ div {
 > border可以实现各种边线的形状，可以实现引导蒙层，页面指定区域透明，之外的都半透明来实现即可。
 
  
-## 思路二、使用box-shadow来实现
+## 思路四、使用box-shadow来实现
 box-shadow，大伙都不陌生，就是盒子的阴影，我们先来了解下它的基本用法：  
 ```CSS
 .boxshadow_1{
@@ -210,141 +350,104 @@ box-shadow，大伙都不陌生，就是盒子的阴影，我们先来了解下�
 
 > box-shadow的阴影距离切勿盲目设置过大，经过测试这个值如果过大，比如4000px，在部分手机上阴影无法显示出来。经过实践，设置为2000px为佳。
 
-## 思路三：使用z-index + opacity来实现
 
-### 1、直接使用遮罩层
-这个好理解，页面元素都是有层级的，我们只需要把最上层的元素设为蒙层区域，在蒙层区域之下设置一个遮罩层即可。 我们来看一个简单例子。
-```CSS
-.z1{
-  position:absolute;
-  left:50px;
-  top:50px;
-  width:50px;
-  height:50px;
-  background:blue;
-  z-index:1;
-}
-.z2{
-  position:absolute;
-  left:60px;
-  top:60px;
-  width:50px;
-  height:50px;
-  background:red;
-  z-index:2;
-}
-.z3{
-  position:absolute;
-  left:70px;
-  top:70px;
-  width:50px;
-  height:50px;
-  background:yellow;
-  z-index:3;
-}
+## 思路五：使用页面节点复制 + z-index
+
+页面内容已经做好了，我们需要蒙层显示某个元素，那么将元素复制到最外层，使用更高的z-index，然后增加一层蒙层来实现。
+```html
+<div class="content one">我是第一个div，我是第一个div</div>
+<div class="content two">我是第二个div，我是第二个div</div>
+<div class="content three">我是第三个div，我是第三个div</div>
+<div class="content four">我是第四个div，我是第四个div</div>
+<div class="mask"></div>
+<div id="maskContent"></div>
 ```
-![z-index](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_z-index_1.png)  
-
-我们修改一下z2的样式。  
-```css
-.z2{
-  position:absolute;
-  left:50px;
-  top:50px;
-  width:50px;
-  height:50px;
-  background:black;
-  opacity:0.5;
-  z-index:2;
-  animation:z_index 2s linear infinite alternate;
+这里设置了一个固定蒙层，和一个固定的蒙层内容元素，我们只需要填充即可。
+```CSS
+.content{
+    padding:10px;
+    z-index:0;
 }
-@keyframes z_index {
-    from {
-      left:50px;
-      top:50px;
-      width:50px;
-      height:50px;
-    }
-    to {
-      left:0px;
-      top:0px;
-      width:200px;
-      height:200px;
-    }
+.mask{
+    position:fixed;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.8);
+    z-index:900
+  }
+  #maskContent{
+    position:fixed;
+    z-index:999;
+    display:inline-block;
+    background-color: #fff;
   }
 ```
-![z-index](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_z-index_2.gif)
-
-只要在布局页面元素的时候，把需要做蒙层的元素确定好，配合js，动态的设置元素的z-index + opacity，就可以很好的做到页面的引导蒙层效果。  
-
-### 2、将非蒙层元素半透明
-
-我们不再新增蒙层，而是完全操作页面节点，将需要遮罩的节点都设置为半透明，蒙层显现内容则完全显示出来，页面的效果和蒙层不太一样，对于空白地方，我们仍然是不透明，只是将有内容的元素给透明，类似骨架屏的效果。  
-为了演示效果，我们看如下例子：  
-页面设置6个元素。
-```html
-<div class="wrap">
-    <div class="z z1"></div>
-    <div class="z z2"></div>
-    <div class="z z3"></div>
-    <div class="z z4"></div>
-    <div class="z z5"></div>
-    <div class="z z6"></div>
-  </div>
-```
-将元素内容用flex并排布局。
-```CSS
-.wrap{
-  display:flex;
-  flex-wrap:wrap;
-  width:150px;
-}
-.z{
-  width:50px;
-  height:50px;
-  transition:all 1s;
-}
-.z1{
-  background:blue;
-}
-.z2{
-  background:black;
-}
-.z3{
-  background:yellow;
-}
-.z4{
-  background:red;
-}
-.z5{
-  background:green;
-}
-.z6{
-  background:orange;
-}
-```
-使用js操作，依次半透明其他元素，显示当前元素来模拟蒙层。
+这里内容区域都是0，然后mask是900，我们的蒙层元素是999，就是最上层了。
 ```js
-let arry = Array.from(document.querySelectorAll(".z"));
-let index = -1;
-let direct = 1;
+function renderContent(cls){
+    let targetNode = document.querySelector(`.${cls}`);
+    let maskContent = document.getElementById("maskContent");
+    maskContent.innerHTML = targetNode.outerHTML;
+    let pos = targetNode.getBoundingClientRect();
+    maskContent.style.top=pos.top+"px";
+    maskContent.style.left=pos.left+"px";
+    maskContent.style.width=pos.width+"px";
+    maskContent.style.height=pos.height+"px";
+ }
+let i = 0;
 setInterval(()=>{
-  if(index>=5) direct = -1;
-  else if(index<=0) direct = 1;
-  index = index+direct;
-  arry.forEach((d,i)=>{
-    d.style.opacity = 1;
-  });
-  setTimeout(()=>{
-    arry.forEach((d,i)=>{
-      if(i==index) return;
-      d.style.opacity = 0.1;
-    });
-  },1000);
-},2000)
+    renderContent(['one','two','three','four'][i]);
+    if(++i>=4) i = 0;
+},1000)
 ```
-![z-index](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_z-index_3.gif)
+这里为了演示效果，增加了一个定时器改变不同的遮罩层。易于理解，看下效果：  
 
-看了这个例子，我们清晰的看到这个蒙层的实现过程。这种蒙层其实更好玩有趣，有点类似当前流行的骨架屏，其他已有元素需要遮罩的内容就是骨架屏的灰色部分，需要显现的就是重点的蒙层内容。  
-有趣！！！
+![z-index](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_content_1.gif)
+
+## 思路六：使用canvas实现
+
+使用canvas的globalCompositeOperation属性来实现,内容参考http://www.tutorialspoint.com/html5/canvas_composition.htm  
+
+重点看xor：Shapes are made transparent where both overlap and drawn normal everywhere else.   
+canvas绘制的形状在重叠处都会变成透明的，非重叠处的其他任何地方都正常绘制内容。  
+所以我们就可以在canvas里面绘制一个canvas蒙层，然后在蒙层中需要显示的内容用xor来绘制重叠，然后内容就会被透明。具体看实例：  
+
+```html
+ <div class="content one">我是第一个div，我是第一个div</div>
+<div class="content two">我是第二个div，我是第二个div</div>
+<div class="content three">我是第三个div，我是第三个div</div>
+<div class="conteent four">我是第四个div，我是第四个div</div>
+<canvas id="mask"></canvas>
+```
+页面增加一个canvas节点。将canvas整体设置成半透明，然后再用xor来实现内容的绘制。
+```js
+ function mask(cls){
+    let targetNode = document.querySelector(`.${cls}`);
+    let pos = targetNode.getBoundingClientRect();
+    let canvas = document.getElementById("mask");
+    let width = window.innerWidth;
+    let height = window.innerHeight;;
+    canvas.setAttribute("width", width);
+    canvas.setAttribute("height",height);
+    var ctx = canvas.getContext("2d"); 
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle ='rgba(255, 255, 255, 0.9)';
+    ctx.fillRect(0, 0, width, height);
+    ctx.fill();
+    ctx.fillStyle ='write';
+    ctx.globalCompositeOperation="xor";
+    ctx.fillRect(pos.left,pos.top,pos.width,pos.height);
+    ctx.fill();
+ }
+let array = ['one','two','three','four'];
+let i = 0;
+setInterval(()=>{
+    mask(array[i]);
+    i++;
+    if(i>=4) i = 0;
+},1000)
+```
+![z-index](https://raw.githubusercontent.com/antiter/blogs/master/images/image-guide_content_2.gif)
 
