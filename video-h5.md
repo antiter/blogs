@@ -3,7 +3,7 @@
 短视频已经无数不在了，但是主体还是使用 app 来承载的。本文讲述 H5 如何实现 app 的视频滑动体验。  
 无声胜有声，一图顶百辩，且看下图：
 
-![video-h5](./images/video-h5_1.gif)
+![video-h5](https://raw.githubusercontent.com/antiter/blogs/master/images/video-h5_1.gif)
 
 从上图可以看到，我们主要实现的功能也是本文要讲解的有：
 
@@ -21,7 +21,7 @@ Let's do it ~~~~~~~~~~~~~~~~
 
 页面布局采用 ul 布局，如下：
 
-![video-h5](./images/video-h5_2.png)
+![video-h5](https://raw.githubusercontent.com/antiter/blogs/master/images/video-h5_2.png)
 
 主要样式：
 
