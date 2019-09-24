@@ -1,5 +1,6 @@
 
-![买买买](https://raw.githubusercontent.com/antiter/blogs/master/code-mark/images/canvas_1.png?raw=true)  
+![canvas绘图](https://raw.githubusercontent.com/antiter/blogs/master/code-mark/images/canvas_1.png?raw=true)  
+
 
 - 转换数据
 - 加载需要渲染的图片
