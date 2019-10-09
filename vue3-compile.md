@@ -289,7 +289,7 @@ tagType有四种类型，在这里定义了，分别是: 0 element,1 component,2
 /^[^\t\r\n\f />][^\t\r\n\f />=]*/.exec('class='abc'>')
 ["class", index: 0, input: "class='abc'>", groups: undefined]
 ```
-如果不是一个孤立的属性，有value值的话（/^[\t\r\n\f ]*=/.test(context.source)），那么再获取属性的value。  
+如果不是一个孤立的属性，有value值的话（/^[\\t\\r\\n\\f ]*=/.test(context.source)），那么再获取属性的value。  
 ```js
 function parseAttribute(
   context: ParserContext,
