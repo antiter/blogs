@@ -6,7 +6,7 @@ Vue3的源代码正在国庆假期就这么突然放出来了，假期还没结�
 
 话不多说，看 [Pre-Alpha](https://github.com/vuejs/vue-next)。  瞧 [compiler-core](https://github.com/vuejs/vue-next/tree/master/packages/compiler-core)   
 
-热门的 reactivity 本文一起来解读一下 ”冷门“ 的 compiler 吧！😄😄😄😄   
+热门的 reactivity 被大佬翻来覆去再研究了，我就和大伙一起来解读一下 ”冷门“ 的 compiler 吧！😄😄😄😄   
 
 如果你对 AST 还不太熟悉，或者对如何实现一个简单的 AST解析器 还不太熟悉，可以猛戳：[手把手教你写一个 AST 解析器](https://juejin.im/post/5d9c16686fb9a04e320a54c0)  
 
