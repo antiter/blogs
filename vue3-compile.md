@@ -4,17 +4,19 @@ Vue3的源代码正在国庆假期就这么突然放出来了，假期还没结�
 
 目前还是 pre Alpha，乐观估计还有 Alpha，Beta版本，最后才是正式版。   
 
-话不多说，看 [Pre-Alpha](https://github.com/vuejs/vue-next)。   
-瞧 [compiler-core](https://github.com/vuejs/vue-next/tree/master/packages/compiler-core)   
+话不多说，看 [Pre-Alpha](https://github.com/vuejs/vue-next)。  瞧 [compiler-core](https://github.com/vuejs/vue-next/tree/master/packages/compiler-core)   
 
-本文一起来解读一下 ”冷门“ 的 compiler 吧！   
-如果你对 AST 还不太熟悉，或者对简单的 AST解析器 还不太熟悉，可以猛戳：[手把手教你写一个 AST 解析器](https://juejin.im/post/5d9c16686fb9a04e320a54c0)  
+热门的 reactivity 本文一起来解读一下 ”冷门“ 的 compiler 吧！😄😄😄😄   
 
-我们写的各种 html 代码，js使用的时候其实就是一个字符串，compiler-core 的一个核心作用就是讲字符串转换成 抽象对象语法树AST。
+如果你对 AST 还不太熟悉，或者对如何实现一个简单的 AST解析器 还不太熟悉，可以猛戳：[手把手教你写一个 AST 解析器](https://juejin.im/post/5d9c16686fb9a04e320a54c0)  
+
+vue3.0的模板解析和vue2.0差异比较大，但是无论怎样变化，基本原理是一致的，我们写的各种 html 代码，js使用的时候其实就是一个字符串，将非结构化的字符串数据，转换成结构化的 AST，我们都是使用强大的正则表达式和indexOf来判断。  
+compiler-core 的一个核心作用就是将字符串转换成 抽象对象语法树AST。   
+
 Let's do IT !   
 
 ## 目录结构
-- __tests__ 测试用例
+- \__tests\__ 测试用例
 - src/ast   ts语法的大佬的类型定义，比如type，enum，interface等
 - src/codegen   将生成的ast转换成render字符串
 - src/errors    定义 compiler 错误类型
@@ -23,8 +25,8 @@ Let's do IT !
 - src/runtimeHelper     生成code的时候的定义常量对应关系
 - src/transform     处理 AST 中的 vue 特有语法，比如 v-if ,v-on 的解析
 
-进入 compiler-core 目录下，结构一目了然。这里说下 __tests__ 目录，是vue的jest测试用例。  
-先看看用例，对阅读源码有很大帮助哦。   
+进入 compiler-core 目录下，结构一目了然。这里说下 \__tests\__ 目录，是vue的jest测试用例。  
+阅读源码前先看看用例，对阅读源码有很大帮助哦。   
 
 如下，测试一个简单的text，执行parse方法之后，得到 ast，期望 ast 的第一个节点与定义的对象是一致的。   
 同理其他的模块测试用例，在阅读源码前可以先瞄一眼，知道这个模块如何使用，输入输出是啥。   
@@ -44,9 +46,17 @@ test('simple text', () => {
     })
 })
 ```
-![alt](./images/compiler-core_2.png)   
+先看一张图，重点是四块：   
+- 起始标签
+- 结束标签
+- 动态内容
+- 普通内容  
 
-接下来，我们开始阅读吧~~~~~~
+其中起始标签会用到递归来处理子节点。   
+
+![alt](https://raw.githubusercontent.com/antiter/blogs/master//images/compiler-core_2.png)   
+
+接下来，我们开始跟着源码来阅读吧~~~~~~
 
 ## parse：将字符串模板转换成 AST 抽象语法树
 
@@ -63,21 +73,21 @@ const result = parse(source)
 ```
 output:  
 
-![output](./images/compiler-core_1.png)   
+![output](https://raw.githubusercontent.com/antiter/blogs/master//images/compiler-core_1.png)   
 
 一个简单的转换结果就呈现出来了，从生成的结构来看，相对于vue2.x有几个比较重要的变化：  
 
-1. 新增了 loc 属性
+- 新增了 loc 属性
     每一个节点都记录了该节点在源码当中的 start 和 end，标识了代码的详细位置，column,line,offset。   
     vu3.0对于开发遇到的问题都要详细的日志输出也基于此，另外支持 source-map
-2. 新增了 tagType 属性
+- 新增了 tagType 属性   
     tagType 属性标识该节点是什么类型的。我们知道 vue2.x 判断节点类型是运行时才有的，vu3.0将判断提前到编译阶段了，提升了性能。  
-    目前有三种类型：0 element,1 component,2 slot,3 template
-3. 新增 isStatic 属性   
+    目前tagType有三种类型：0 element,1 component,2 slot,3 template
+- 新增 isStatic 属性   
     将模板提前编译好，标识是否为动态变化的，比如动态指令
-4. ……    
+- ……    
 
-新版的 AST 明显比vue2.x要复杂些，可以看到vue3.0将很多可以在编译阶段就能确定的就在编译阶段确定，标识编译结果，不需要等到运行时再去判断，节省内存和性能。这个也是尤大大重点说了的，优化编译。    
+新版的 AST 明显比 vue2.x 要复杂些，可以看到vue3.0将很多可以在编译阶段就能确定的就在编译阶段确定，标识编译结果，不需要等到运行时再去判断，节省内存和性能。这个也是尤大大重点说了的，优化编译，提升性能。    
 
 接下来我们来看下转换的代码，主要有如下几个方法：  
 
@@ -159,45 +169,60 @@ function parseChildren(
   return nodes
 }
 ```
-ancestors 用来存储未匹配的父节点，为后进先出的stack。  
-循环处理 source，循环截止条件是 isEnd ，结束有两个条件：   
+ancestors 用来存储未匹配的起始节点，为后进先出的stack。  
 
-1. context.source为空，即处理完成
-2. 碰到截止节点标签(</)，且能在未匹配的起始标签（ancestors）里面找到对对应的tag。
+循环处理 source，循环截止条件是 isEnd 方法返回true，即是处理完成了，结束有两个条件：   
+
+1. context.source为空，即整个模板都处理完成
+2. 碰到截止节点标签(</)，且能在未匹配的起始标签（ancestors）里面找到对对应的tag。这个对应 parseChildren 的子节点处理完成。
 
 匹配尚未结束，则进入循环匹配。有三种情况：  
-1. if (startsWith(s, context.options.delimiters[0]))  
-    开始匹配到vue的文本输出内容 {{ ，则意味着需要处理 文本内容插入，
-2. else if (mode === TextModes.DATA && s[0] === '<')
-    内容是已 < 开头，是标签内容的标识符号，开始处理起始标签和截止标签。
-3. 以上都未匹配成功
+1. if (startsWith(s, context.options.delimiters[0]))      
+    delimiters 是分割符合，vue 是 {{ 和 }} 。开始匹配到vue的文本输出内容 {{ ，则意味着需要处理 文本内容插入，
+2. else if (mode === TextModes.DATA && s[0] === '<')     
+    内容是已 < 开头，即 html 标签的标识符号，则开始处理起始标签和截止标签两种情况。
+3. 以上条件都不是，或者匹配未成功    
     那么就是动态文本内容了。
 
 如果是第三种动态文本插入，则执行 parseInterpolation 组装文本节点，其中 isStatic=false 标识是变量，比较简答，方法就不贴了。   
+```js
+return {
+    type: NodeTypes.INTERPOLATION,
+    content: {
+      type: NodeTypes.SIMPLE_EXPRESSION,
+      isStatic: false,
+      content,
+      loc: getSelection(context, innerStart, innerEnd)
+    },
+    loc: getSelection(context, start)
+  }
+```
 
-先看下这两个处理 source 内容后移的方法：   
+再看下这两个处理 source 内容后移的方法：   
+
 advanceBy(context,number) : 将需要处理的模板source ，后移 number 个字符，重新记录 loc   
 advanceSpaces() : 后移存在的连续的空格   
 
-如果是 < 开头，分两种情况：  
+回到上面的匹配条件，如果是 < 开头，分两种情况：  
 1. 第二个字符是 "/"   
-    对应的就是 </ 
-        如果是 </> ，那么认为是一个无效标签，直接 advanceBy 后移 3 个字符即可。 
-        如果是 <\/a，那么认为是一个截止标签，执行 parseTag 方法处理。
+    对应的就是 </     
+        如果是 </> ，那么认为是一个无效标签，直接 advanceBy 后移 3 个字符即可。    
+        如果是 <\/a，那么认为是一个截止标签，执行 parseTag 方法处理。    
 2. 第二个字符是字母   
     对应就是标签的起始文字了，如 <\div，执行 parseElement 方法处理起始标签。
 
 ### parseTag 处理标签
 
-正则：/^<\/?([a-z][^\t\r\n\f />]*)/i 这个就不多说了，匹配 <\div> <\/div>这种标签。  
+如果是截止标签：parseTag，则直接处理完成。   
+如果是起始标签：parseElement 执行，调用parseTag 处理标签，然后再去递归处理子节点等。  
 
+正则：/^<\/?([a-z][^\t\r\n\f />]*)/i 这个就不多说了，匹配 <\div> <\/div>这种标签。  
 测试 match ：    
 ```js
 /^<\/?([a-z][^\t\r\n\f />]*)/i.exec("<div class='abc'>")
 (2) ["<div", "div", index: 0, input: "<div class='abc'>", groups: undefined]
 ```
-mathch[0] 即匹配到的标签元素   
-
+显然，mathch[1] 即匹配到的标签元素。我们看主方法：      
 ```js
 function parseTag(
   context: ParserContext,
@@ -249,10 +274,11 @@ function parseTag(
   }
 }
 ```
-tagType : 0 element,1 component,2 slot,3 template   
-while 循环，advanceBy 去掉起始 < 和标签名之后:  
+tagType有四种类型，在这里定义了，分别是: 0 element,1 component,2 slot,3 template   
+
+我们看while 循环，advanceBy 去掉起始 < 和标签名之后:  
 如果跟着是 > 或者 /> ，那么标签处理结束，退出循环。   
-否则是标签的元素，我们执行 parseAttribute 来处理标签属性，在节点上增加props，保存 该起始节点的 attributes;   
+否则是标签的元素，我们执行 parseAttribute 来处理标签属性，该节点上增加props，保存 该起始节点的 attributes;   
 
 > 执行方法后面的！，是ts语法，相当于告诉ts，这里一定会有值，无需做空判断，如   const match = /^<\/?([a-z][^\t\r\n\f />]*)/i.exec(context.source)!
 
@@ -264,11 +290,6 @@ while 循环，advanceBy 去掉起始 < 和标签名之后:
 ["class", index: 0, input: "class='abc'>", groups: undefined]
 ```
 如果不是一个孤立的属性，有value值的话（/^[\t\r\n\f ]*=/.test(context.source)），那么再获取属性的value。  
-parseAttributeValue 获取属性值的方法比较容易：  
-
-- 如果value值有引号开始，那么就找到下一个引号未value值结束 （class="aaa" class='aaa'）
-- 如果value没有引号，那么就找到下一个空格为value值结束 （class=aaa）
-
 ```js
 function parseAttribute(
   context: ParserContext,
@@ -361,7 +382,12 @@ function parseAttribute(
   }
 }
 ```
-vue的语法特性，如果属性名称是v-,:,@,#开头的，需要特殊处理，看下这个正则：  
+parseAttributeValue 获取属性值的方法比较容易：  
+
+- 如果value值有引号开始，那么就找到下一个引号未value值结束 （class="aaa" class='aaa'）
+- 如果value没有引号，那么就找到下一个空格为value值结束 （class=aaa）
+
+其中有处理vue的语法特性，如果属性名称是v-,:,@,#开头的，需要特殊处理，看下这个正则：  
 ```js
 /(?:^v-([a-z0-9-]+))?(?:(?::|^@|^#)([^\.]+))?(.+)?$/i.exec("v-name")
 (4) ["v-name", "name", undefined, undefined, index: 0, input: "v-name", groups: undefined]
@@ -370,20 +396,21 @@ vue的语法特性，如果属性名称是v-,:,@,#开头的，需要特殊处理
 (4) [":name", undefined, "name", undefined, index: 0, input: ":name", groups: undefined]
 ```
 
-mathch[2]如果有值，即匹配到了，说明是非 v-，如果是名称是[\]包裹的则是[动态指令](https://vuejs.org/v2/guide/custom-directive.html#Dynamic-Directive-Arguments)，
+mathch[2]如果有值，即匹配到了，说明是非 v-name，如果是名称是[\]包裹的则是 [动态指令](https://vuejs.org/v2/guide/custom-directive.html#Dynamic-Directive-Arguments)，
 将 isStatic 置为 false 
 
 #### parseElement 处理起始标签
 
-执行 parseTag ,获取到起始节点的 标签元素和属性，如果当前也是截止标签(比如<br/>),则直接返回该标签。  
+parseElement 处理起始标签，我们先执行 parseTag 解析标签，获取到起始节点的 标签元素和属性，如果当前也是截止标签(比如<br/>),则直接返回该标签。  
 否则，将起始标签 push 到未匹配的起始 ancestors栈里面。   
 然后继续去处理子元素 parseChildren ,注意，将未匹配的 ancestors 传进去了，parseChildren 的截止条件有两个：  
-
 1. context.source为空，即处理完成
 2. 碰到截止节点标签(</)，且能在未匹配的起始标签（ancestors）里面找到对对应的tag。   
 
-因此，如果是碰到匹配的截止标签了，则需要 ancestors.pop，将节点设置为当前的子节点。   
-处理当前起始节点，该节点也可能是截止节点，比如：<\img src="xxx"/>，则继续去执行处理截止节点即可。
+因此，如果是循环碰到匹配的截止标签了，则需要 ancestors.pop()，将节点添加到当前的子节点。   
+
+当然，处理当前起始节点，该节点也可能是截止节点，比如：<\img src="xxx"/>，则继续去执行处理截止节点即可。   
+方法如下：  
 ```js
 function parseElement(
   context: ParserContext,
@@ -415,6 +442,7 @@ function parseElement(
 }
 ```
 
-至此，vue3.0的 将 模板文件转换成 AST 的主流程已经基本完成，静待下篇，AST 的 transform 处理。
+至此，vue3.0的 将 模板文件转换成 AST 的主流程已经基本完成。  
+静待下篇，AST 的 transform 处理。
 
 
