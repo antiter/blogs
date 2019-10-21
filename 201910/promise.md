@@ -146,7 +146,7 @@ output:
 内部第二个then
 外部第二个then
 
-## 再看第四段代码
+## 最后第四段代码
 ```js
 let p = new Promise((resolve, reject) => {
   console.log("外部promise");
