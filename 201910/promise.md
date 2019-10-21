@@ -193,3 +193,40 @@ Promise 的 then 的 注册 和 执行 是分离的。
 执行 : 先 同步，再 微任务 ，再 宏观任务。   
 
 只有分开理解上述，才能真正理解它们的执行顺序~~~~~~~~~~~~~~~~
+
+
+最后出一道题：   
+```js
+new Promise((resolve, reject) => {
+  console.log("外部promise");
+  resolve();
+})
+  .then(() => {
+    console.log("外部第一个then");
+    new Promise((resolve, reject) => {
+      console.log("内部promise");
+      resolve();
+    })
+      .then(() => {
+        console.log("内部第一个then");
+      })
+      .then(() => {
+        console.log("内部第二个then");
+      });
+    return new Promise((resolve, reject) => {
+      console.log("内部promise2");
+      resolve();
+    })
+      .then(() => {
+        console.log("内部第一个then2");
+      })
+      .then(() => {
+        console.log("内部第二个then2");
+      });
+  })
+  .then(() => {
+    console.log("外部第二个then");
+  });
+```
+
+你能知道输出结果，且能解释清楚吗？  
