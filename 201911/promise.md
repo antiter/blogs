@@ -1,23 +1,26 @@
 # 高级进阶：深度揭秘 Promise 注册和执行过程
 
-Promise 大伙太熟悉了，不过这里讲大伙知道的表面简单知识，而是一起来深入剖析 Promise 的注册微任务和执行的完整过程。做到知其然知其所以然~           
+Promise 大伙太熟悉了，不过这里不讲大伙都知道的表面简单知识，而是一起来深入剖析 Promise 的注册微任务和执行的完整过程。能正确的使用 Promise 且能做到知其然知其所以然~           
 
 本文分为如下三部分：   
 - 五段代码深入剖析 Promise 的注册微任务和代码执行过程
-- 分析 Promise/A+ 与 webkit 的 Promise 的实现差异
+- 分析 Promise/A+ 与 webkit（ chrome 和 safari 内核） 的 Promise 的实现差异
 - 巩固一下，出道题
 
-我们通常学习 Promise 都是基于[ Promises/A+ ](https://github.com/then/promise) 的实现。但是我不得不告诉你，本文还将分析该 js 实现和 webkit（ chrome 和 safari 内核） 的 Promise 的实现差异。具体到执行上也有差异。   
+我们通常学习 Promise 都是基于[ Promises/A+ ](https://github.com/then/promise) 的实现。但是我不得不告诉你，本文还将分析该 js 实现和 webkit 的 Promise 的实现差异。具体到代码运行上的差异。  
+
 本文整体思路采取 代码例子 + 剖析讲解 的方式来解读，做到人人能懂，人人能理解的目的。   
 
 毫不夸张，如果全部读懂本文，那么 Promise 的注册和执行过程都将所向披靡，深入你的骨髓，~~你就是 Promise 大神！~~  ~~~~~~~  
 
 ## 前言
 
-本文已代码解读的方式来学习整个过程。这里提供了五段代码，如果你都能理解清楚，正确的说出output 过程，那么厉害大牛如你，Promise 的执行过程了如指掌，如果还能够解答文后的题目，那就完美了……         
+本文已代码解读的方式来学习整个过程。这里提供了五段代码，如果你都能理解清楚，完全正确的说出 output 过程，那么厉害大牛如你，我在这里给你竖个大拇指，祝贺你对 Promise 的执行过程已经了如指掌。         
 
-当然可能好多大牛已经熟悉了，但是可能也未必真正了解核心，不妨看看结果题目。  当前如果是和我一样的~~菜鸟~~，那么我们就一起来看看吧~     
+当然可能你也未必真正了解核心，能正确的理解和解释这个过程，不妨看看题目的解释。   
+当然如果是和我一样的~~菜鸟~~，那么我们就一起来看看吧~     
    
+看答案前，先自己默默算下输出结果吧。   
 ## 第一段代码   
 ```js
 new Promise((resolve, reject) => {
@@ -42,9 +45,8 @@ new Promise((resolve, reject) => {
   });
 
 ```
-看答案前，先自己默默算下输出结果吧。   
 
-其实，这个输出还是比较简单的，外部第一个 new Promise 执行，执行完 resolve ，然后执行外部第一个 then 。外部第一个 then 方法里面 return 一个 Promise，这个 return ，代表 外部的第二个 then 的执行需要等待 return 之后的结果。当然会先执行完内部两个 then 之后，再执行 外部的第二个 then ，机智如你，完全正确。       
+这个输出还是比较简单的，外部第一个 new Promise 执行，执行完 resolve ，然后执行外部第一个 then 。外部第一个 then 方法里面 return 一个 Promise，这个 return ，代表 外部的第二个 then 的执行需要等待 return 之后的结果。当然会先执行完内部两个 then 之后，再执行 外部的第二个 then ，机智如你，完全正确。       
 
 **output:**     
 外部promise   
@@ -109,8 +111,8 @@ new Promise((resolve, reject) => {
 外部第二个then   
 内部第二个then   
 
-> 我们发现，这里显然是执行完一个 then ,接着会注册该 then 之后的 then，按照任务队列的原理，我们可以发现，内外 then 是交替执行，然后交替注册的。所以才会出现输出内外交替内容。
-> 另外，我这里所说的 then 的注册，是指在微任务队列的注册，并不是 .then 的方法的执行，.then 方法的执行，我们可以理解为仅仅只是初始化而已。如果看过源码的会知道，.then 的执行其实是同步的，内部是再开启一个 new Promise ，但是由于上一个状态未流转，该 then 并不会注册到微任务队列中，而是会等待上一个的执行结果，所以我们把 .then 没注册微任务就理解成没执行来解决是没有问题的。   
+> 我们发现，这里显然是执行完一个 then ,接着会注册该 then 之后的下一个 then，按照任务队列的原理，我们可以发现，内外 then 是交替执行，然后交替注册的。所以才会出现输出内外交替内容。    
+> 另外，我这里所说的 then 的注册，是指微任务队列的注册，并不是 .then 的方法的执行，实际上 .then 方法的执行，我们可以理解为仅仅只是初始化而已。如果看过源码的会知道，.then 的执行确实是同步的，内部是再开启一个 new Promise ，但是由于上一个状态未流转，该 then 并不会此时注册到微任务队列中，而是会等待上一个的执行完成，所以我们把 .then 没注册微任务就理解成尚没执行是没有问题的。   
 
 ## 再看第三段代码
 ```js
@@ -304,13 +306,13 @@ new Promise((resolve, reject) => {
 外部第三个then   
 
 此题执行顺序图：   
-![promise](https://raw.githubusercontent.com/antiter/blogs/master/images/promise_3.png)   
+![promise](https://raw.githubusercontent.com/antiter/blogs/master/images/promise_3.png?raw=true)   
 
 上面我们是使用 Promise 的 js 实现的代码输出的结果。   
 
 然而你把这段代码放在 chrome/safari 上跑一下，发现结果不一样，如下是 webkit 内核跑出来的结果。    
 
-![promise](https://raw.githubusercontent.com/antiter/blogs/master/images/promise_1.png)    
+![promise](https://raw.githubusercontent.com/antiter/blogs/master/images/promise_1.png?raw=true)    
 
 这个是什么原因呢？    
 为啥多了一个 return Promise.resolve()，就把外层的 then 都执行完了呢？   
@@ -381,7 +383,7 @@ function PromiseDone(promise, status, value, promiseQueue) {
 ```
 有了上面的理解之后，如果外层再加一个 then ，那么也知道结果了，执行完刚刚注册的 “内部第二个then”，之后，开始执行注册的 “外部第五个then”。    
 
-![promise](https://raw.githubusercontent.com/antiter/blogs/master/images/promise_2.png)    
+![promise](https://raw.githubusercontent.com/antiter/blogs/master/images/promise_2.png?raw=true)    
 
 ## 巩固一下
 
