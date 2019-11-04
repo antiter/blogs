@@ -1,4 +1,4 @@
-# 高级进阶：深度揭秘 Promise 微任务注册和执行过程
+# 高级进阶：深度揭秘 Promise 注册微任务和执行过程
 
 - 五段代码深入剖析 Promise 的注册微任务和代码执行过程
 - 分析 Promise/A+ 与 webkit（ chrome 和 safari 内核） 的 Promise 的实现差异
