@@ -4,6 +4,7 @@
 - 分析 Promise/A+ 与 webkit（ chrome 和 safari 内核） 的 Promise 的实现差异
 - 巩固一下，出道题
 
+![promise](https://raw.githubusercontent.com/antiter/blogs/master/images/promise_4.png?raw=true)     
 Promise 大伙太熟悉了，不过这里不讲大伙都知道的表面简单知识，而是一起来深入剖析 Promise 的注册微任务和执行的完整过程。能正确的使用 Promise 且能做到知其然知其所以然~             
 
 我们通常学习 Promise 都是基于[ Promises/A+ ](https://github.com/then/promise) 的实现。但是我不得不告诉你，本文还将分析该 js 实现和 webkit 的 Promise 的实现差异。具体到代码运行上的差异。  
