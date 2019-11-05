@@ -1,10 +1,10 @@
 # 高级进阶：深度揭秘 Promise 注册微任务和执行过程
 
+![promise](http://img30.360buyimg.com/jdphoto/jfs/t1/52689/36/15168/153858/5dc0f5afEd1531125/e7b4bc9e2d4baea9.png)  
+
 - 五段代码深入剖析 Promise 的注册微任务和代码执行过程
 - 分析 Promise/A+ 与 webkit（ chrome 和 safari 内核） 的 Promise 的实现差异
 - 巩固一下，出道题
-
-![promise](http://img30.360buyimg.com/jdphoto/jfs/t1/52689/36/15168/153858/5dc0f5afEd1531125/e7b4bc9e2d4baea9.png)     
 
 Promise 大伙太熟悉了，不过这里不讲大伙都知道的表面简单知识，而是一起来深入剖析 Promise 的注册微任务和执行的完整过程。能正确的使用 Promise 且能做到知其然知其所以然~             
 
