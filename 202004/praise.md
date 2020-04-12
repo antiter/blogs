@@ -2,14 +2,14 @@
 
 直播有一个很重要的互动：点赞。  
 
-为了制造直播间的氛围，直播相对于普通视频或者文本内容，点赞通常有两个特殊需求：
+为了烘托直播间的氛围，直播相对于普通视频或者文本内容，点赞通常有两个特殊需求：
 
 - 点赞动作无限次，引导用户疯狂点赞
 - 直播间的所有疯狂点赞，都需要在所有用户界面都动画展现出来
 
 我们先来看效果图：
 
-![image1](./images/bubble8.gif)
+![image1](https://raw.githubusercontent.com/antiter/blogs/master/202004/images/bubble8.gif)
 
 从效果图上我们还看到有几点重要信息：
 
@@ -18,7 +18,7 @@
 - 快到顶部的时候，是渐渐消失。
 - 收到大量的点赞请求的时候，点赞动画不扎堆，井然有序持续出现。
 
-那么如何实现这些要求呢？下面介绍两种实现方式来实现：
+那么如何实现这些要求呢？下面介绍两种实现方式来实现(底部附完整 demo)：
 
 ## CSS3 实现
 
@@ -56,7 +56,7 @@ animation: name duration timing-function delay iteration-count direction fill-mo
     bottom:0;
 }
 ```
-![image1](https://mmbiz.qpic.cn/sz_mmbiz_png/Zt8nQO5picsYBgkL8n8fDuLCsxNON8CEvgH9hdjAlO29RVGcibAI41SeD6icyeXQCIOSfD16czDjXPK5X2TZalk0g/0?wx_fmt=png)
+![image1](https://raw.githubusercontent.com/antiter/blogs/master/202004/images/bubble1.png)
 
 ### Step 2: 运动起来
 
@@ -81,7 +81,7 @@ animation: name duration timing-function delay iteration-count direction fill-mo
 每个点赞动画只运行 1 次;   
 动画是只需要向前 forwards。
 
-![image1](./images/bubble1.gif)
+![image1](https://raw.githubusercontent.com/antiter/blogs/master/202004/images/bubble1.gif)
 
 ### Step 3: 增加渐隐
 
@@ -101,7 +101,7 @@ animation: name duration timing-function delay iteration-count direction fill-mo
     }
 }
 ```
-![image1](./images/bubble2.gif)
+![image1](https://raw.githubusercontent.com/antiter/blogs/master/202004/images/bubble2.gif)
 
 ### Step 4: 增加动画放大效果
 
@@ -125,7 +125,7 @@ animation: name duration timing-function delay iteration-count direction fill-mo
   }
 ```
 
-![image1](./images/bubble3.gif)
+![image1](https://raw.githubusercontent.com/antiter/blogs/master/202004/images/bubble3.gif)
 
 ### Step 5: 设置偏移
 
@@ -156,7 +156,7 @@ animation: name duration timing-function delay iteration-count direction fill-mo
 
 效果图如下：  
 
-![image1](./images/bubble4.gif)
+![image1](https://raw.githubusercontent.com/antiter/blogs/master/202004/images/bubble4.gif)
 
 ### Step 6: 补齐动画样式
 
@@ -207,7 +207,7 @@ setInterval(() => {
 
 另外还需要手动清除节点。以防节点过多带来的性能问题。如下是完整的效果图。
 
-![image1](./images/bubble_all.gif)
+![image1](https://raw.githubusercontent.com/antiter/blogs/master/202004/images/bubble_all.gif)
 
 ## Canvas 绘图实现
 
@@ -288,7 +288,7 @@ loadImages(){
 
 看下图的正弦曲线：  
 
-![image1](./images/bubble5.png)
+![image1](https://raw.githubusercontent.com/antiter/blogs/master/202004/images/bubble5.png)
 
 这是 Math.sin(0) 到 Math.sin(9) 的曲线图走势图，它是一个平滑的从正数到负数，然后再从负数到正数的曲线图，完全符合我们的需求，于是我们再需要生成一个随机比率值，让摆动幅度随机起来。
 
@@ -314,7 +314,7 @@ diffTime - scaleTime = 0 ~ 0.9, diffTime 为 0.4 的时候，说明是已经运�
 
 当然如果运行距离再长一些，我们可以增大 angle 值，比如变成 3 个波峰(如果时间短，出现三个波峰，就会运行过快，有闪烁现象)。如下图:
 
-![image1](./images/bubble6.png)
+![image1](https://raw.githubusercontent.com/antiter/blogs/master/202004/images/bubble6.png)
 
 ### Y 轴偏移
 
@@ -492,6 +492,6 @@ thumbsUp(num: number) {
 
 源码运行效果图：
 
-![image1](./images/bubble7.gif)
+![image1](https://raw.githubusercontent.com/antiter/blogs/master/202004/images/bubble7.gif)
 
 这里还可以体验线上点赞动画，[戳这里](https://wqs.jd.com/pglive/index.html)
