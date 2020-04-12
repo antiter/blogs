@@ -56,7 +56,7 @@ animation: name duration timing-function delay iteration-count direction fill-mo
     bottom:0;
 }
 ```
-![image1](./images/bubble1.png)
+![image1](https://mmbiz.qpic.cn/sz_mmbiz_png/Zt8nQO5picsYBgkL8n8fDuLCsxNON8CEvgH9hdjAlO29RVGcibAI41SeD6icyeXQCIOSfD16czDjXPK5X2TZalk0g/0?wx_fmt=png)
 
 ### Step 2: 运动起来
 
